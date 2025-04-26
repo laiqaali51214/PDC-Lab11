@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Solr Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        #searchBox {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card h3 {
+            margin: 0 0 10px;
+        }
+
+        .result-card p {
+            margin: 3px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Solr Search UI</h2>
+    <input type="text" id="searchBox" placeholder="Search by title, author, or id..." />
+
+    <div id="results"></div>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchBox').on('input', function () {
+                const query = $(this).val();
+                $.get('/search', { q: query }, function (data) {
+                    $('#results').empty();
+                    if (data.length === 0) {
+                        $('#results').append("<p>No results found.</p>");
+                    } else {
+                        data.forEach(function (doc) {
+                            $('#results').append(`
+                                <div class="result-card">
+                                    <h3>${doc.title || "No Title"}</h3>
+                                    <p><strong>ID:</strong> ${doc.id}</p>
+                                    <p><strong>Author:</strong> ${doc.author || "Unknown"}</p>
+                                    <p><strong>Category:</strong> ${doc.category || "N/A"}</p>
+                                    <p><strong>Published:</strong> ${doc.published}</p>
+                                </div>
+                            `);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
